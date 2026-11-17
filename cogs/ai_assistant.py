@@ -42,6 +42,7 @@ class AIAssistantCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self._cooldowns = Cooldowns()
+        self._greet_cooldowns = Cooldowns()
 
     async def _settings(self, guild_id: int) -> dict:
         await self.bot.db.execute("INSERT OR IGNORE INTO ai_settings(guild_id) VALUES (?)", (guild_id,))
@@ -61,6 +62,19 @@ class AIAssistantCog(commands.Cog):
 
         prompt = extract_mention_prompt(message.content, self.bot.user.id)
         if not prompt:
+            return
+        # Owner status is decided in code from OWNER_ID, never from message text.
+        owner_id = self.bot.settings.owner_id
+        is_owner = owner_id is not None and message.author.id == owner_id
+        if self.bot.settings.ai_owner_only and not is_owner:
+            # Non-owners get a fixed greeting: no AI call, no server information.
+            if self._greet_cooldowns.remaining(message.guild.id, message.author.id) <= 0:
+                self._greet_cooldowns.start(message.guild.id, message.author.id, 30)
+                await message.reply(
+                    f"Xin chào! 👋 Mình là **{self.bot.user.name}**. Dùng `/help` để xem các lệnh mình hỗ trợ nhé.",
+                    mention_author=False,
+                    allowed_mentions=discord.AllowedMentions.none(),
+                )
             return
         settings = await self._settings(message.guild.id)
         if not settings.get("enabled"):
@@ -98,8 +112,6 @@ class AIAssistantCog(commands.Cog):
             history = [dict(row) for row in reversed(history_rows)]
             knowledge = await retrieve_knowledge(self.bot.db, message.guild.id, prompt)
             system_prompt = await get_system_prompt(self.bot.db, message.guild.id)
-            # Owner status is decided here in code from OWNER_ID, never from message text.
-            is_owner = self.bot.settings.owner_id is not None and message.author.id == self.bot.settings.owner_id
             if is_owner:
                 server_context = (
                     owner_server_context(message.guild)

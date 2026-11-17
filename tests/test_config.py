@@ -38,3 +38,11 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(settings.ai_cooldown, 10)
         self.assertEqual(settings.database_path, settings.database_fallback_path)
         self.assertEqual(settings.runtime_environment, "local")
+
+
+class OwnerOnlyConfigTests(unittest.TestCase):
+    def test_ai_owner_only_defaults_to_true_and_can_be_disabled(self) -> None:
+        with patch.dict(os.environ, {"DISCORD_TOKEN": "t"}, clear=True):
+            self.assertTrue(Settings.from_env().ai_owner_only)
+        with patch.dict(os.environ, {"DISCORD_TOKEN": "t", "AI_OWNER_ONLY": "false"}, clear=True):
+            self.assertFalse(Settings.from_env().ai_owner_only)

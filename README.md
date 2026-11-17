@@ -42,6 +42,7 @@ Do not start multiple replicas against the same SQLite file. Back up `/data/mybo
 | `OWNER_ID` | No | — | Discord user ID allowed to run `/admin` operations |
 | `DEV_GUILD_ID` | No | — | Sync slash commands to one development server instead of globally |
 | `AI_MAX_TOKENS` | No | `500` | Maximum AI response tokens, capped at 8,192 |
+| `AI_OWNER_ONLY` | No | `true` | When true, only `OWNER_ID` receives AI answers; other members get a fixed greeting |
 | `AI_COOLDOWN` | No | `10` | Per-user AI cooldown in seconds |
 | `LOG_LEVEL` | No | `INFO` | Python log level |
 

@@ -21,6 +21,7 @@ class Settings:
     ai_max_tokens: int
     ai_cooldown: int
     log_level: str
+    ai_owner_only: bool = True
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -59,6 +60,7 @@ class Settings:
             ai_max_tokens=_bounded_int("AI_MAX_TOKENS", default=500, minimum=1, maximum=8192),
             ai_cooldown=_bounded_int("AI_COOLDOWN", default=10, minimum=1, maximum=3600),
             log_level=log_level,
+            ai_owner_only=os.getenv("AI_OWNER_ONLY", "true").strip().lower() not in {"0", "false", "no", "off"},
         )
 
 
