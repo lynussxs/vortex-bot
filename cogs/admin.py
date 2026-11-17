@@ -52,6 +52,28 @@ class AdminCog(commands.Cog):
             ephemeral=True,
         )
 
+    @admin.command(name="cleanup", description="Remove duplicate server-only slash commands from this server.")
+    async def cleanup(self, interaction: discord.Interaction) -> None:
+        if not await self._is_owner(interaction):
+            return
+        guild = interaction.guild
+        if guild is None:
+            await interaction.response.send_message(embed=error_embed("Run this inside a server."), ephemeral=True)
+            return
+        if self.bot.settings.dev_guild_id == guild.id:
+            await interaction.response.send_message(
+                embed=error_embed("This is the development server, whose commands are server-only on purpose. Remove DEV_GUILD_ID from the environment to switch to global commands, then run this."),
+                ephemeral=True,
+            )
+            return
+        await interaction.response.defer(ephemeral=True, thinking=True)
+        self.bot.tree.clear_commands(guild=guild)
+        await self.bot.tree.sync(guild=guild)
+        await interaction.followup.send(
+            embed=success_embed("Duplicates removed", "Server-only commands were cleared. Only the global commands remain. Press Ctrl+R in Discord if the list still looks old."),
+            ephemeral=True,
+        )
+
     @admin.command(name="reload", description="Reload a loaded feature cog.")
     async def reload(self, interaction: discord.Interaction, cog: str) -> None:
         if not await self._is_owner(interaction):

@@ -78,9 +78,21 @@ class Vortex(commands.Bot):
             self.tree.copy_global_to(guild=guild)
             synced = await self.tree.sync(guild=guild)
             self.logger.info("Synchronized %d slash commands to development guild", len(synced))
+            await self._wipe_global_commands()
         else:
             synced = await self.tree.sync()
             self.logger.info("Synchronized %d global slash commands", len(synced))
+
+    async def _wipe_global_commands(self) -> None:
+        """Remove stale global commands from Discord so they don't duplicate the dev-guild ones."""
+        global_commands = self.tree.get_commands()
+        self.tree.clear_commands(guild=None)
+        try:
+            await self.tree.sync()
+            self.logger.info("Cleared stale global slash commands (development mode).")
+        finally:
+            for command in global_commands:  # keep them in memory for reloads and status counts
+                self.tree.add_command(command)
 
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
         # The prefix is "@bot", so every mention is parsed as a command attempt.
