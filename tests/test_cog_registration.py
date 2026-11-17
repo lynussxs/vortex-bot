@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 from config import Settings
-from main import MyBot
+from main import Vortex
 
 
 class CogRegistrationTests(unittest.TestCase):
@@ -25,7 +25,7 @@ class CogRegistrationTests(unittest.TestCase):
                 ai_cooldown=10,
                 log_level="CRITICAL",
             )
-            bot = MyBot(settings)
+            bot = Vortex(settings)
             await bot.db.initialize()
             cog_names = sorted(
                 file.stem for file in (Path(__file__).parents[1] / "cogs").glob("*.py")

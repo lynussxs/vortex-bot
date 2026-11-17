@@ -1,4 +1,4 @@
-"""MyBot entry point: configure, load cogs, and synchronize slash commands."""
+"""Vortex entry point: configure, load cogs, and synchronize slash commands."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ def configure_logging(level: str) -> None:
     )
 
 
-class MyBot(commands.Bot):
+class Vortex(commands.Bot):
     def __init__(self, settings: Settings) -> None:
         intents = discord.Intents.none()
         intents.guilds = True
@@ -56,7 +56,7 @@ class MyBot(commands.Bot):
             settings.ai_model,
             settings.ai_max_tokens,
         )
-        self.logger = logging.getLogger("mybot")
+        self.logger = logging.getLogger("vortex")
         self.tree.on_error = handle_app_command_error
         self._shutdown_started = False
 
@@ -118,7 +118,7 @@ class MyBot(commands.Bot):
         if self._shutdown_started:
             return
         self._shutdown_started = True
-        self.logger.info("Shutting down MyBot.")
+        self.logger.info("Shutting down Vortex.")
         try:
             for extension in list(self.extensions):
                 try:
@@ -135,7 +135,7 @@ async def run() -> None:
     load_dotenv()
     settings = Settings.from_env()
     configure_logging(settings.log_level)
-    bot = MyBot(settings)
+    bot = Vortex(settings)
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
         try:

@@ -14,7 +14,7 @@ from core.permissions import can_moderate
 from utils.helpers import decode_json_list
 from utils.validators import parse_duration
 
-logger = logging.getLogger("mybot.moderation")
+logger = logging.getLogger("vortex.moderation")
 
 
 class ModerationCog(commands.Cog):
@@ -95,7 +95,7 @@ class ModerationCog(commands.Cog):
                 await target.timeout(None, reason=reason[:500])
         except discord.Forbidden:
             await interaction.response.send_message(
-                embed=error_embed("MyBot lacks the required permission or role position."),
+                embed=error_embed("Vortex lacks the required permission or role position."),
                 ephemeral=True,
             )
             return None
@@ -240,7 +240,7 @@ class ModerationCog(commands.Cog):
         try:
             deleted = await interaction.channel.purge(limit=amount, reason=f"Cleared by {interaction.user}")
         except discord.Forbidden:
-            await interaction.followup.send(embed=error_embed("MyBot cannot manage messages in this channel."), ephemeral=True)
+            await interaction.followup.send(embed=error_embed("Vortex cannot manage messages in this channel."), ephemeral=True)
             return
         await interaction.followup.send(
             embed=success_embed("Messages cleared", f"Deleted **{len(deleted)}** message(s)."),

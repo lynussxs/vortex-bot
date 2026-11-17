@@ -1,12 +1,12 @@
-# MyBot
+# Vortex
 
-MyBot is a modular Python 3.12+ Discord bot for server moderation, member management, community tools, analytics, and a mention-only OpenRouter assistant that responds in Vietnamese or English. It uses `discord.py` 2.x, slash commands, one asynchronous SQLite connection, and separate feature cogs. Slash command labels and standard administrative responses are currently in English. It does not include a dashboard.
+Vortex is a modular Python 3.12+ Discord bot for server moderation, member management, community tools, analytics, and a mention-only OpenRouter assistant that responds in Vietnamese or English. It uses `discord.py` 2.x, slash commands, one asynchronous SQLite connection, and separate feature cogs. Slash command labels and standard administrative responses are currently in English. It does not include a dashboard.
 
 ## Run locally
 
 1. Create a Discord application and bot in the [Discord Developer Portal](https://discord.com/developers/applications).
-2. Enable **Server Members Intent** and **Message Content Intent** under the bot's privileged gateway intents. Message Content is used for automod, leveling, activity counts, and responding only when a member directly mentions MyBot.
-3. Invite the bot with the `bot` and `applications.commands` scopes. Grant only the permissions needed by the features you enable; common permissions include View Channels, Send Messages, Read Message History, Embed Links, Attach Files, Manage Messages, Manage Channels, Manage Roles, Moderate Members, Kick Members, and Ban Members. Keep MyBot's highest role below administrator roles and above roles it must manage.
+2. Enable **Server Members Intent** and **Message Content Intent** under the bot's privileged gateway intents. Message Content is used for automod, leveling, activity counts, and responding only when a member directly mentions Vortex.
+3. Invite the bot with the `bot` and `applications.commands` scopes. Grant only the permissions needed by the features you enable; common permissions include View Channels, Send Messages, Read Message History, Embed Links, Attach Files, Manage Messages, Manage Channels, Manage Roles, Moderate Members, Kick Members, and Ban Members. Keep Vortex's highest role below administrator roles and above roles it must manage.
 4. Copy `.env.example` to `.env` for local development and fill in the values. Never commit `.env` or post tokens in chat.
 5. From this directory, install the dependencies and start the worker:
 
@@ -23,7 +23,7 @@ Add `DISCORD_TOKEN` and `OPENROUTER_API_KEY` in Replit Secrets. The project secr
 
 ## Railway deployment
 
-1. Deploy the `MyBot` folder as the Railway service root (or set the service root directory to `MyBot`).
+1. Deploy this repository as the Railway service. If the bot code lives in a subfolder of your repo, set that folder as the service root directory.
 2. Add a Railway persistent volume mounted at `/data`. This is required for `/data/mybot.db` to survive container replacement.
 3. Add `DISCORD_TOKEN` and `OPENROUTER_API_KEY` under the Railway service variables. Also set `OWNER_ID`; optionally set `AI_MODEL`, `AI_MAX_TOKENS`, and `AI_COOLDOWN`.
 4. Keep the service to one replica. SQLite is intentionally configured for a single bot process and uses WAL mode.
@@ -66,9 +66,9 @@ Do not start multiple replicas against the same SQLite file. Back up `/data/mybo
 
 ## Privacy and operational notes
 
-- AI is disabled per server until an administrator enables it. MyBot only sends an OpenRouter request after a direct mention. It stores only a short per-user, per-channel conversation context.
-- The AI receives public server metadata and matching approved knowledge entries. It does not fetch private channels or general message history. `/knowledge sync` imports metadata and pinned posts only from public rules, FAQ, announcement, or news channels that MyBot can read.
-- Analytics stores event counts, not message text. Counts begin when MyBot is present and use Message Content Intent for message activity.
+- AI is disabled per server until an administrator enables it. Vortex only sends an OpenRouter request after a direct mention. It stores only a short per-user, per-channel conversation context.
+- The AI receives public server metadata and matching approved knowledge entries. It does not fetch private channels or general message history. `/knowledge sync` imports metadata and pinned posts only from public rules, FAQ, announcement, or news channels that Vortex can read.
+- Analytics stores event counts, not message text. Counts begin when Vortex is present and use Message Content Intent for message activity.
 - Message edit/delete logs record the event, author, channel, and message ID without retaining message text.
 - Moderation, warnings, ticket actions, giveaway entries, polls, role configuration, AI configuration, and knowledge entries are stored in SQLite. Foreign keys and indexes are enabled.
 - Persistent role buttons, ticket panels, suggestion buttons, and giveaway buttons are restored from the database on restart.

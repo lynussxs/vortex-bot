@@ -1,1 +1,1 @@
-"""Feature cogs loaded dynamically by MyBot."""
+"""Feature cogs loaded dynamically by Vortex."""

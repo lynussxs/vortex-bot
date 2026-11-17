@@ -21,7 +21,7 @@ LOG_EVENTS = (
     "voice",
     "moderation",
 )
-logger = logging.getLogger("mybot.logging")
+logger = logging.getLogger("vortex.logging")
 
 
 class LoggingCog(commands.Cog):

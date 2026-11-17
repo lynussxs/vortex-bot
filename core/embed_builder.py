@@ -10,8 +10,8 @@ WARNING_COLOR = discord.Color.from_rgb(241, 196, 15)
 ERROR_COLOR = discord.Color.from_rgb(231, 76, 60)
 GOLD_COLOR = discord.Color.from_rgb(255, 193, 7)
 
-# Updated at startup with the bot's real name / avatar (see MyBot.on_ready).
-BRAND_NAME = "MyBot"
+# Updated at startup with the bot's real name / avatar (see Vortex.on_ready).
+BRAND_NAME = "Vortex"
 BRAND_ICON_URL: str | None = None
 
 

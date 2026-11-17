@@ -47,7 +47,7 @@ class PermissionTests(unittest.TestCase):
         self.target.top_role = FakeRole(11)
         allowed, reason = can_moderate(self.moderator, self.target, self.bot_member)
         self.assertFalse(allowed)
-        self.assertIn("MyBot", reason)
+        self.assertIn("Vortex", reason)
 
     def test_protected_role_permissions(self) -> None:
         protected = FakeRole(1, SimpleNamespace(administrator=True))

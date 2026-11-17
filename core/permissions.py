@@ -28,11 +28,11 @@ def can_moderate(
     if moderator.id == target.id:
         return False, "You cannot target yourself."
     if target.bot and bot_member is not None and target.id == bot_member.id:
-        return False, "You cannot target MyBot."
+        return False, "You cannot target Vortex."
     if moderator.guild.owner_id != moderator.id and target.top_role >= moderator.top_role:
         return False, "That member has an equal or higher role than yours."
     if bot_member is None or target.top_role >= bot_member.top_role:
-        return False, "MyBot's highest role must be above the target's highest role."
+        return False, "Vortex's highest role must be above the target's highest role."
     return True, ""
 
 

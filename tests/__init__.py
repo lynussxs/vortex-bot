@@ -1,1 +1,1 @@
-"""Unit tests for MyBot."""
+"""Unit tests for Vortex."""

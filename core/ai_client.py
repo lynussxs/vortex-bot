@@ -72,7 +72,7 @@ class OpenRouterClient:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://replit.com/",
-            "X-Title": "MyBot",
+            "X-Title": "Vortex",
         }
         async with self._semaphore:
             try:

@@ -13,7 +13,7 @@ from discord.ext import commands
 from core.embed_builder import make_embed
 from utils.helpers import utc_day
 
-logger = logging.getLogger("mybot.analytics")
+logger = logging.getLogger("vortex.analytics")
 
 
 class AnalyticsCog(commands.Cog):
@@ -101,7 +101,7 @@ class AnalyticsCog(commands.Cog):
         )
         humans = sum(not member.bot for member in guild.members)
         bots = sum(member.bot for member in guild.members)
-        embed = make_embed(f"{guild.name} analytics", "Counts reflect available Discord events; data starts when MyBot is added.")
+        embed = make_embed(f"{guild.name} analytics", "Counts reflect available Discord events; data starts when Vortex is added.")
         embed.add_field(name="Members", value=f"{guild.member_count or 0:,}")
         embed.add_field(name="Humans", value=f"{humans:,}")
         embed.add_field(name="Bots", value=f"{bots:,}")
@@ -149,7 +149,7 @@ class AnalyticsCog(commands.Cog):
             )
         else:
             embed.description = "No message activity is available yet."
-        embed.set_footer(text="Requires Message Content Intent. MyBot counts message events without storing message text.")
+        embed.set_footer(text="Requires Message Content Intent. Vortex counts message events without storing message text.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 

@@ -102,7 +102,7 @@ class TicketsCog(commands.Cog):
         if guild is None:
             return
         if not guild.me or not guild.me.guild_permissions.manage_channels:
-            await interaction.response.send_message(embed=error_embed("MyBot needs Manage Channels permission to create ticket panels."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex needs Manage Channels permission to create ticket panels."), ephemeral=True)
             return
         await self._publish_panel(guild, channel, staff_role, category)
         await interaction.response.send_message(embed=success_embed("Ticket panel ready", f"Panel posted in {channel.mention}."), ephemeral=True)
@@ -154,7 +154,7 @@ class TicketsCog(commands.Cog):
         if interaction.guild is None:
             return
         if not interaction.guild.me or not interaction.guild.me.guild_permissions.manage_channels:
-            await interaction.response.send_message(embed=error_embed("MyBot needs Manage Channels permission to create ticket panels."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex needs Manage Channels permission to create ticket panels."), ephemeral=True)
             return
         await self._publish_panel(interaction.guild, channel, None, None)
         await interaction.response.send_message(embed=success_embed("Ticket panel ready", f"Panel posted in {channel.mention}."), ephemeral=True)
@@ -200,7 +200,7 @@ class TicketsCog(commands.Cog):
                 reason=f"Ticket opened by {interaction.user}",
             )
         except discord.HTTPException:
-            await interaction.response.send_message(embed=error_embed("MyBot could not create the private ticket channel."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex could not create the private ticket channel."), ephemeral=True)
             return
         try:
             await self.bot.db.execute(
@@ -251,7 +251,7 @@ class TicketsCog(commands.Cog):
             await interaction.response.send_message(embed=error_embed("Only the ticket owner or staff can close this ticket."), ephemeral=True)
             return
         await interaction.response.send_message(
-            embed=make_embed("Close this ticket?", "MyBot will save a text transcript and make this channel read-only."),
+            embed=make_embed("Close this ticket?", "Vortex will save a text transcript and make this channel read-only."),
             view=TicketCloseConfirm(self, interaction.user.id, interaction.channel_id),
             ephemeral=True,
         )

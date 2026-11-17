@@ -194,7 +194,7 @@ class LevelingCog(commands.Cog):
         role: discord.Role,
     ) -> None:
         if role.is_default() or is_protected_role(role) or not bot_can_manage_role(interaction.guild, role):
-            await interaction.response.send_message(embed=error_embed("That reward role is protected or above MyBot's role."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("That reward role is protected or above Vortex's role."), ephemeral=True)
             return
         await self.bot.db.execute(
             """INSERT INTO level_rewards(guild_id, level, role_id) VALUES (?, ?, ?)

@@ -9,7 +9,7 @@ from discord import app_commands
 
 from core.embed_builder import error_embed
 
-logger = logging.getLogger("mybot")
+logger = logging.getLogger("vortex")
 
 
 async def handle_app_command_error(

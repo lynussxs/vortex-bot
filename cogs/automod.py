@@ -17,7 +17,7 @@ from core.cooldowns import EventWindow
 from core.embed_builder import make_embed, success_embed
 from utils.helpers import decode_json_list, encode_json_list
 
-logger = logging.getLogger("mybot.automod")
+logger = logging.getLogger("vortex.automod")
 SUSPICIOUS_IP_URL = re.compile(r"https?://(?:\d{1,3}\.){3}\d{1,3}", re.IGNORECASE)
 DISCORD_INVITE = re.compile(r"(?:discord\.gg/|discord(?:app)?\.com/invite/)[A-Za-z0-9-]+", re.IGNORECASE)
 

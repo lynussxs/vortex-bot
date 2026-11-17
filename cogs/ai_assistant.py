@@ -22,7 +22,7 @@ from core.cooldowns import Cooldowns
 from core.embed_builder import error_embed, make_embed, success_embed
 from utils.constants import AI_INPUT_LIMIT
 
-logger = logging.getLogger("mybot.ai")
+logger = logging.getLogger("vortex.ai")
 BOT_MENTION_RE = re.compile(r"<@!?(?P<id>\d+)>")
 
 
@@ -37,7 +37,7 @@ def extract_mention_prompt(content: str, bot_id: int) -> str | None:
 
 
 class AIAssistantCog(commands.Cog):
-    ai_group = app_commands.Group(name="ai", description="Configure MyBot's AI assistant.")
+    ai_group = app_commands.Group(name="ai", description="Configure Vortex's AI assistant.")
 
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
@@ -73,7 +73,7 @@ class AIAssistantCog(commands.Cog):
         remaining = self._cooldowns.remaining(message.guild.id, message.author.id)
         if remaining > 0:
             await message.reply(
-                f"Please wait {int(remaining + 0.99)} seconds before asking MyBot again.",
+                f"Please wait {int(remaining + 0.99)} seconds before asking Vortex again.",
                 mention_author=False,
                 allowed_mentions=discord.AllowedMentions.none(),
             )
@@ -173,7 +173,7 @@ class AIAssistantCog(commands.Cog):
             (interaction.guild_id,),
         )
         await interaction.response.send_message(
-            embed=success_embed("AI enabled", "MyBot will answer messages that directly mention it."),
+            embed=success_embed("AI enabled", "Vortex will answer messages that directly mention it."),
             ephemeral=True,
         )
 
@@ -186,7 +186,7 @@ class AIAssistantCog(commands.Cog):
             "ON CONFLICT(guild_id) DO UPDATE SET enabled = 0, updated_at = CURRENT_TIMESTAMP",
             (interaction.guild_id,),
         )
-        await interaction.response.send_message(embed=success_embed("AI disabled", "MyBot will not send AI responses in this server."), ephemeral=True)
+        await interaction.response.send_message(embed=success_embed("AI disabled", "Vortex will not send AI responses in this server."), ephemeral=True)
 
     @ai_group.command(name="setprompt", description="Replace the server-specific AI instructions.")
     @app_commands.checks.has_permissions(manage_guild=True)
@@ -209,12 +209,12 @@ class AIAssistantCog(commands.Cog):
             ephemeral=True,
         )
 
-    @ai_group.command(name="resetprompt", description="Restore MyBot's default server instructions.")
+    @ai_group.command(name="resetprompt", description="Restore Vortex's default server instructions.")
     @app_commands.checks.has_permissions(manage_guild=True)
     @app_commands.guild_only()
     async def reset_prompt(self, interaction: discord.Interaction) -> None:
         await self.bot.db.execute("DELETE FROM custom_ai_prompts WHERE guild_id = ?", (interaction.guild_id,))
-        await interaction.response.send_message(embed=success_embed("Default instructions restored", "MyBot's secure default prompt is active again."), ephemeral=True)
+        await interaction.response.send_message(embed=success_embed("Default instructions restored", "Vortex's secure default prompt is active again."), ephemeral=True)
 
     @ai_group.command(name="setmodel", description="Choose an OpenRouter model for this server.")
     @app_commands.checks.has_permissions(manage_guild=True)
@@ -241,7 +241,7 @@ class AIAssistantCog(commands.Cog):
         embed.add_field(name="Server enabled", value="Yes" if settings.get("enabled") else "No")
         embed.add_field(name="OpenRouter configured", value="Yes" if self.bot.ai.enabled else "No")
         embed.add_field(name="Model", value=settings.get("model") or self.bot.settings.ai_model)
-        embed.add_field(name="Response trigger", value="Direct MyBot mention only", inline=False)
+        embed.add_field(name="Response trigger", value="Direct Vortex mention only", inline=False)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @ai_group.command(name="test", description="Send a short test request to the configured model.")
@@ -253,7 +253,7 @@ class AIAssistantCog(commands.Cog):
         try:
             answer = await self.bot.ai.chat(
                 [{"role": "system", "content": "Reply with a brief greeting in the user's language."},
-                 {"role": "user", "content": "MyBot AI connection test."}],
+                 {"role": "user", "content": "Vortex AI connection test."}],
                 model=settings.get("model") or self.bot.settings.ai_model,
             )
         except AIServiceError as exc:

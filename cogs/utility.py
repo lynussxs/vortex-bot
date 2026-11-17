@@ -13,7 +13,7 @@ class UtilityCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @app_commands.command(name="ping", description="Check MyBot's response time.")
+    @app_commands.command(name="ping", description="Check Vortex's response time.")
     async def ping(self, interaction: discord.Interaction) -> None:
         latency_ms = round(self.bot.latency * 1000)
         await interaction.response.send_message(
@@ -72,9 +72,9 @@ class UtilityCog(commands.Cog):
         embed.set_image(url=target.display_avatar.url)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="help", description="Browse everything MyBot can do.")
+    @app_commands.command(name="help", description="Browse everything Vortex can do.")
     async def help(self, interaction: discord.Interaction) -> None:
-        embed = make_embed("📖 MyBot command guide", "Type `/` and pick a command. Admin commands need the matching Discord permission.")
+        embed = make_embed("📖 Vortex command guide", "Type `/` and pick a command. Admin commands need the matching Discord permission.")
         sections = {
             "🛡️ Moderation": "`/ban` `/kick` `/timeout` `/untimeout` `/warn` `/warnings` `/clear` `/lock` `/unlock` `/slowmode` `/modlogs`",
             "🤖 Automod": "`/automod enable` `disable` `config` `whitelist` `blacklist`",
@@ -91,11 +91,11 @@ class UtilityCog(commands.Cog):
             embed.add_field(name=name, value=value, inline=False)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @app_commands.command(name="botinfo", description="Show MyBot's status and feature readiness.")
+    @app_commands.command(name="botinfo", description="Show Vortex's status and feature readiness.")
     async def botinfo(self, interaction: discord.Interaction) -> None:
         ai_ready = bool(getattr(getattr(self.bot, "ai", None), "enabled", False))
         db_ready = bool(getattr(getattr(self.bot, "db", None), "connected", False))
-        embed = make_embed("MyBot status")
+        embed = make_embed("Vortex status")
         embed.add_field(name="Servers", value=str(len(self.bot.guilds)))
         embed.add_field(name="Database", value="Ready" if db_ready else "Unavailable")
         embed.add_field(name="AI provider", value="Configured" if ai_ready else "Not configured")

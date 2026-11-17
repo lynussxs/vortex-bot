@@ -42,7 +42,7 @@ class RoleToggleButton(discord.ui.Button["RolePanelView"]):
                 await interaction.user.add_roles(role, reason="Self-assignable role panel")
                 message = f"Added {role.mention}."
         except discord.Forbidden:
-            await interaction.response.send_message(embed=error_embed("MyBot cannot manage that role."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex cannot manage that role."), ephemeral=True)
             return
         await interaction.response.send_message(message, ephemeral=True, allowed_mentions=discord.AllowedMentions.none())
 
@@ -137,7 +137,7 @@ class RolesCog(commands.Cog):
     @app_commands.guild_only()
     async def role_add(self, interaction: discord.Interaction, member: discord.Member, role: discord.Role) -> None:
         if not self._can_assign(interaction, role):
-            await interaction.response.send_message(embed=error_embed("MyBot or your role is not high enough, or the role is protected."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex or your role is not high enough, or the role is protected."), ephemeral=True)
             return
         if member.top_role >= role and interaction.guild.owner_id != interaction.user.id:
             await interaction.response.send_message(embed=error_embed("You cannot assign a role at or above the member's highest role."), ephemeral=True)
@@ -154,7 +154,7 @@ class RolesCog(commands.Cog):
     @app_commands.guild_only()
     async def role_remove(self, interaction: discord.Interaction, member: discord.Member, role: discord.Role) -> None:
         if not self._can_assign(interaction, role):
-            await interaction.response.send_message(embed=error_embed("MyBot or your role is not high enough, or the role is protected."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex or your role is not high enough, or the role is protected."), ephemeral=True)
             return
         try:
             await member.remove_roles(role, reason=f"Role removed by {interaction.user}")
@@ -173,7 +173,7 @@ class RolesCog(commands.Cog):
         color: app_commands.Range[int, 0, 16777215] = 5793266,
     ) -> None:
         if not interaction.guild.me or not interaction.guild.me.guild_permissions.manage_roles:
-            await interaction.response.send_message(embed=error_embed("MyBot needs Manage Roles permission."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex needs Manage Roles permission."), ephemeral=True)
             return
         try:
             role = await interaction.guild.create_role(
@@ -192,7 +192,7 @@ class RolesCog(commands.Cog):
     @app_commands.guild_only()
     async def role_delete(self, interaction: discord.Interaction, role: discord.Role) -> None:
         if not self._can_assign(interaction, role):
-            await interaction.response.send_message(embed=error_embed("MyBot or your role is not high enough, or the role is protected."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Vortex or your role is not high enough, or the role is protected."), ephemeral=True)
             return
         role_name = role.name
         try:
@@ -242,7 +242,7 @@ class RolesCog(commands.Cog):
                 await interaction.followup.send(embed=error_embed("Could not find that panel message in the selected channel."), ephemeral=True)
                 return
             if message.author.id != self.bot.user.id:
-                await interaction.followup.send(embed=error_embed("Only MyBot-created messages can be role panels."), ephemeral=True)
+                await interaction.followup.send(embed=error_embed("Only Vortex-created messages can be role panels."), ephemeral=True)
                 return
             current_rows = await self.bot.db.fetchall(
                 "SELECT * FROM reaction_roles WHERE message_id = ?",

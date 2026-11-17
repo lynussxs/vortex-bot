@@ -26,7 +26,7 @@ class AdminCog(commands.Cog):
     async def status(self, interaction: discord.Interaction) -> None:
         if not await self._is_owner(interaction):
             return
-        embed = make_embed("MyBot operational status")
+        embed = make_embed("Vortex operational status")
         embed.add_field(name="Bot", value=f"{self.bot.user} · `{self.bot.user.id}`" if self.bot.user else "Connecting")
         embed.add_field(name="Servers", value=str(len(self.bot.guilds)))
         embed.add_field(name="Loaded cogs", value=str(len(self.bot.extensions)))

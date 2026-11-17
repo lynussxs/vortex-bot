@@ -160,7 +160,7 @@ class WelcomeCog(commands.Cog):
             await interaction.response.send_message(embed=error_embed("That role cannot be assigned automatically."), ephemeral=True)
             return
         if interaction.guild.me is None or role >= interaction.guild.me.top_role:
-            await interaction.response.send_message(embed=error_embed("Move MyBot's highest role above the autorole."), ephemeral=True)
+            await interaction.response.send_message(embed=error_embed("Move Vortex's highest role above the autorole."), ephemeral=True)
             return
         await self.bot.db.execute(
             "INSERT OR IGNORE INTO autoroles(guild_id, role_id) VALUES (?, ?)",
@@ -204,7 +204,7 @@ class WelcomeCog(commands.Cog):
                 roles.append(role)
         if roles and bot_member and bot_member.guild_permissions.manage_roles:
             try:
-                await member.add_roles(*roles, reason="MyBot autorole")
+                await member.add_roles(*roles, reason="Vortex autorole")
             except discord.HTTPException:
                 pass
 
