@@ -1,6 +1,6 @@
-# Arcadia Bot
+# Vortex Bot
 
-Bot quản lý server Discord: lệnh slash (`/`), kiểm duyệt, level/XP, chào mừng, nhật ký, AutoMod và AI (Claude).
+Bot quản lý server Discord: lệnh slash (`/`), kiểm duyệt, level/XP, chào mừng, nhật ký, AutoMod và AI (qua **OpenRouter**).
 AI **chỉ trả lời khi có người @tên bot** (hoặc dùng `/hoi`).
 
 ## Chức năng
@@ -13,7 +13,7 @@ AI **chỉ trả lời khi có người @tên bot** (hoặc dùng `/hoi`).
 | Nhật ký | tin nhắn xóa/sửa, vào/rời, đổi role/nickname, voice, tạo/xóa kênh/role, ban/unban |
 | AutoMod | chống spam, chặn link mời, chống mention hàng loạt, từ cấm, chống raid. `/automod status/toggle`, `/automod word add/remove/list`. Staff được miễn. |
 | Tiện ích | `/help` `/ping` `/serverinfo` `/userinfo` `/avatar` `/poll` `/embed` `/announce` |
-| AI | @bot hoặc `/hoi`; `/tomtat`; admin: `/ai prompt set/load/show/reset`, `/ai kb add/list/show/remove`, `/ai channels add/remove/all`, `/ai automod`, `/ai toggle`, `/ai status` |
+| AI | @bot hoặc `/hoi`; `/tomtat`; admin: `/ai model set/show/reset`, `/ai prompt set/load/show/reset`, `/ai kb add/list/show/remove`, `/ai channels add/remove/all`, `/ai automod`, `/ai toggle`, `/ai status` |
 | Cấu hình | `/setup auto` (tự dò kênh theo tên), `/setup channel`, `/setup role`, `/setup show`, `/setup congkhai` |
 
 ## Gắn prompt / kiến thức cho AI
@@ -30,12 +30,12 @@ Ví dụ hỏi: _"@bot server mình có những kênh game nào?"_ hoặc _"@bot
 2. **Mời bot** vào server với quyền: Manage Roles, Manage Channels, Kick/Ban Members, Moderate Members, Manage Messages, View Audit Log, View Channels, Send Messages, Embed Links, Attach Files, Add Reactions, Read Message History, Use External Emojis (scope `bot` và `applications.commands`). Link mẫu (thay `CLIENT_ID`):
    `https://discord.com/oauth2/authorize?client_id=CLIENT_ID&scope=bot%20applications.commands&permissions=1374658358486`
 3. **Kéo role của bot lên cao** trong Server Settings → Roles (cao hơn các role cần quản lý, thấp hơn role Owner).
-4. Lấy **API key Claude** tại console.anthropic.com (nếu không có thì mọi thứ vẫn chạy, chỉ AI bị tắt).
+4. Lấy **API key OpenRouter** tại openrouter.ai/keys (nếu không có thì mọi thứ vẫn chạy, chỉ AI bị tắt).
 
 ## Deploy lên Railway
 1. Đẩy thư mục này lên một repo GitHub (**private**).
 2. Railway → New Project → Deploy from GitHub repo → chọn repo.
-3. Tab **Variables** thêm: `DISCORD_TOKEN`, `GUILD_ID` (ID server của bạn, để lệnh slash hiện ngay), `ANTHROPIC_API_KEY`, `DB_PATH=/data/bot.db`.
+3. Tab **Variables** thêm: `DISCORD_TOKEN`, `GUILD_ID` (ID server của bạn, để lệnh slash hiện ngay), `OPENROUTER_API_KEY`, `AI_MODEL` (tùy chọn), `DB_PATH=/data/bot.db`.
 4. Thêm **Volume** gắn vào đường dẫn `/data` (**bắt buộc**, nếu không dữ liệu XP/cảnh cáo mất sau mỗi lần deploy).
 5. Nếu Railway không tự nhận lệnh chạy: Settings → Start Command = `python main.py`.
 6. Xem tab Logs, thấy `Đã đồng bộ N lệnh slash` và `Bot sẵn sàng` là xong.
@@ -48,12 +48,12 @@ Ví dụ hỏi: _"@bot server mình có những kênh game nào?"_ hoặc _"@bot
 ```bash
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-export DISCORD_TOKEN=...   GUILD_ID=...   ANTHROPIC_API_KEY=...
+export DISCORD_TOKEN=...   GUILD_ID=...   OPENROUTER_API_KEY=...
 python3 main.py
 ```
 
 ## Tiết kiệm chi phí AI
-- Mặc định dùng model nhỏ (`claude-haiku-5-5`, đổi bằng biến `AI_MODEL`). Phần prompt cố định được bật prompt caching.
+- Chọn model rẻ trên openrouter.ai/models. Đổi ngay trong Discord bằng `/ai model set <nhà-cung-cấp/tên-model>` (bot tự thử model trước khi lưu), hoặc đặt biến `AI_MODEL` làm mặc định. `/ai model show|reset` để xem/về mặc định.
 - Mỗi người tối đa `AI_USER_HOURLY` (30) câu/giờ, cách nhau 6 giây. AI kiểm duyệt tối đa `AI_MOD_HOURLY` (60) lần/giờ/server.
 - Chỉ **một số ít tin nghi ngờ** (mẫu lừa đảo, link rút gọn...) mới được gửi cho AI, không gửi mọi tin nhắn.
 - Dùng `/ai channels add` để giới hạn AI chỉ trả lời ở vài kênh.
@@ -62,3 +62,7 @@ python3 main.py
 - Arcane/ProBot/Sapphire đang chạy cùng: hãy tắt tính năng trùng (đặc biệt XP/level, chào mừng, log) của bot cũ để không bị báo hai lần.
 - Nút Duyệt/Bỏ qua của AI chỉ hoạt động trong 1 giờ và mất khi bot khởi động lại; staff vẫn xử lý tay bằng `/timeout`, `/purge`.
 - Bot không bao giờ tự ban người dùng.
+
+## Lệnh cũ báo "Application command ... not found"
+Đó là lệnh của bản bot trước (`/admin`, `/setmodel`...) còn nằm trên Discord. Khi đặt biến `GUILD_ID`, bot tự xóa lệnh **toàn cầu** cũ lúc khởi động
+(đặt `KEEP_GLOBAL_COMMANDS=1` nếu muốn giữ). Nếu không đặt `GUILD_ID`, bot xóa lệnh cũ ở cấp server. Sau khi deploy, tải lại Discord (Ctrl+R).
