@@ -14,7 +14,7 @@ log = logging.getLogger("vortex")
 
 EXTENSIONS = (
     "cogs.setup", "cogs.moderation", "cogs.levels", "cogs.welcome",
-    "cogs.logs", "cogs.automod", "cogs.utility", "cogs.ai",
+    "cogs.logs", "cogs.automod", "cogs.utility", "cogs.embedtools", "cogs.ai",
 )
 
 

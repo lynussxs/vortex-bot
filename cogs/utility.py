@@ -18,9 +18,9 @@ class Utility(commands.Cog):
     async def help(self, interaction: discord.Interaction):
         e = discord.Embed(title="📖 Trợ giúp", color=C_INFO, description=(
             "**Mọi người**\n`/rank` `/leaderboard` `/hoi` `/serverinfo` `/userinfo` `/avatar` `/ping`\n"
-            "💬 **Hỏi AI:** @tên bot rồi hỏi thẳng, ví dụ _@bot server có những kênh game nào?_\n\n"
+            "💬 **Hỏi AI:** @tên bot rồi hỏi thẳng, ví dụ _@bot server có những kênh game nào?_\n🛠️ **Staff:** nhờ AI thao tác bằng @bot hoặc `/admin`, ví dụ _@bot tô role Hồng màu hồng nhạt_ (theo quyền Discord của bạn)\n\n"
             "**Staff**\n`/ban` `/unban` `/kick` `/timeout` `/untimeout` `/warn` `/warnings` `/clearwarns`\n"
-            "`/purge` `/slowmode` `/lock` `/unlock` `/tomtat` `/poll` `/embed` `/announce`\n\n"
+            "`/purge` `/slowmode` `/lock` `/unlock` `/tomtat` `/poll` `/embed` `/announce` `/admin`\n\n"
             "**Quản trị**\n`/setup` `/automod` `/levelrole` `/xp` `/levels` `/welcome` `/autorole` `/ai`"))
         await interaction.response.send_message(embed=e, ephemeral=True)
 
@@ -77,26 +77,6 @@ class Utility(commands.Cog):
         msg = await interaction.original_response()
         for i in range(len(options)):
             await msg.add_reaction(NUM[i])
-
-    @app_commands.command(name="embed", description="Gửi một embed tùy chỉnh")
-    @app_commands.describe(tieu_de="Tiêu đề", noi_dung="Nội dung (dùng \\n để xuống dòng)", mau="Màu hex, ví dụ B197FC",
-                           kenh="Kênh gửi (mặc định kênh hiện tại)")
-    @app_commands.default_permissions(manage_messages=True)
-    @app_commands.checks.has_permissions(manage_messages=True)
-    @app_commands.guild_only()
-    async def embed(self, interaction: discord.Interaction, tieu_de: app_commands.Range[str, 1, 256],
-                    noi_dung: app_commands.Range[str, 1, 3000], mau: str = "5B8DEF",
-                    kenh: Optional[discord.TextChannel] = None):
-        try:
-            color = int(mau.lstrip("#"), 16)
-        except ValueError:
-            return await interaction.response.send_message("❌ Màu không hợp lệ (ví dụ `B197FC`).", ephemeral=True)
-        e = discord.Embed(title=tieu_de, description=noi_dung.replace("\\n", "\n"), color=color)
-        try:
-            await (kenh or interaction.channel).send(embed=e)
-        except discord.Forbidden:
-            return await interaction.response.send_message("❌ Bot không gửi được vào kênh đó.", ephemeral=True)
-        await interaction.response.send_message("✅ Đã gửi.", ephemeral=True)
 
     @app_commands.command(name="announce", description="Gửi thông báo vào một kênh")
     @app_commands.describe(kenh="Kênh nhận thông báo", noi_dung="Nội dung", ping="Ping cả server?")

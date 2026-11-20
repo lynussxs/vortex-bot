@@ -1,4 +1,4 @@
-"""Lop goi AI qua OpenRouter (API tuong thich OpenAI). Doi nha cung cap chi can sua file nay."""
+"""Lop goi AI qua OpenRouter (API tuong thich OpenAI, ho tro tool calling). Doi nha cung cap chi can sua file nay."""
 import asyncio
 import logging
 import os
@@ -27,25 +27,14 @@ class AIClient:
 
     async def _http(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=45))
+            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60))
         return self._session
 
     async def close(self):
         if self._session and not self._session.closed:
             await self._session.close()
 
-    async def chat(self, system, user: str, max_tokens: int = 500, model: str | None = None):
-        """Tra ve noi dung tra loi (str) hoac None neu loi (ly do nam trong self.last_error)."""
-        if not self.key:
-            self.last_error = "chưa có OPENROUTER_API_KEY"
-            return None
-        if isinstance(system, list):  # chap nhan danh sach khoi {'text': ...}
-            system = "\n\n".join(b.get("text", "") for b in system)
-        payload = {
-            "model": model or self.model,
-            "max_tokens": max_tokens,
-            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-        }
+    async def _post(self, payload: dict):
         headers = {"Authorization": f"Bearer {self.key}", "Content-Type": "application/json",
                    "HTTP-Referer": self.referer, "X-Title": self.title}
         async with self._sem:
@@ -61,7 +50,7 @@ class AIClient:
                     return None
                 err = data.get("error") if isinstance(data, dict) else None
                 if status == 200 and not err:
-                    break
+                    return data
                 msg = (err or {}).get("message") if isinstance(err, dict) else str(err or data)[:200]
                 self.last_error = f"HTTP {status}: {msg}"[:300]
                 if status in (429, 500, 502, 503) and attempt == 0:
@@ -69,15 +58,38 @@ class AIClient:
                     continue
                 log.warning("OpenRouter lỗi: %s", self.last_error)
                 return None
+        return None
+
+    async def complete(self, messages: list, tools: list | None = None, max_tokens: int = 700, model: str | None = None):
+        """Goi mot luot. Tra ve {'content': str, 'tool_calls': list} hoac None neu loi (xem self.last_error)."""
+        if not self.key:
+            self.last_error = "chưa có OPENROUTER_API_KEY"
+            return None
+        payload = {"model": model or self.model, "max_tokens": max_tokens, "messages": messages}
+        if tools:
+            payload["tools"] = tools
+            payload["tool_choice"] = "auto"
+        data = await self._post(payload)
+        if data is None:
+            return None
         try:
-            content = data["choices"][0]["message"]["content"]
+            msg = data["choices"][0]["message"]
         except (KeyError, IndexError, TypeError):
             self.last_error = "phản hồi không đúng định dạng"
             return None
+        content = msg.get("content")
         if isinstance(content, list):  # mot so model tra ve danh sach khoi
             content = "".join(p.get("text", "") for p in content if isinstance(p, dict))
         usage = data.get("usage") or {}
-        log.info("AI model=%s tokens in=%s out=%s", payload["model"], usage.get("prompt_tokens"),
-                 usage.get("completion_tokens"))
+        log.info("AI model=%s tokens in=%s out=%s tools=%s", payload["model"], usage.get("prompt_tokens"),
+                 usage.get("completion_tokens"), len(msg.get("tool_calls") or []))
         self.last_error = ""
-        return (content or "").strip() or None
+        return {"content": (content or "").strip(), "tool_calls": msg.get("tool_calls") or []}
+
+    async def chat(self, system, user: str, max_tokens: int = 500, model: str | None = None):
+        """Hoi-dap don gian. Tra ve str hoac None."""
+        if isinstance(system, list):
+            system = "\n\n".join(b.get("text", "") for b in system)
+        msg = await self.complete([{"role": "system", "content": system}, {"role": "user", "content": user}],
+                                  None, max_tokens, model)
+        return (msg["content"] or None) if msg else None
